@@ -1,0 +1,18 @@
+{
+    "configurations": [
+        {
+            "name": "DevContainer",
+            "includePath": [
+                "/sgdk/inc",
+                "/sgdk/res",
+                "${workspaceFolder}/inc",
+                "${workspaceFolder}/res"
+            ],
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true,
+                "databaseFilename": ""
+            }
+        }
+    ],
+    "version": 4
+}
