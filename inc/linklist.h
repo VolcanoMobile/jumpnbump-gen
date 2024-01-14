@@ -19,17 +19,12 @@ typedef struct __LinkList_t
 
 } LinkList;
 
-extern bool                               LINKLIST_Clean(LinkList *_list);
-
-extern bool                               LINKLIST_AddStart(LinkList *_list, LinkList_Node *_node);
-
-extern bool                               LINKLIST_AddEnd(LinkList *_list, LinkList_Node *_node);
-
-extern bool                               LINKLIST_AddBefore(LinkList_Node *_refNode, LinkList_Node *_node);
-
-extern bool                               LINKLIST_AddAfter(LinkList_Node *_refNode, LinkList_Node *_node);
-
-extern bool                               LINKLIST_Remove(LinkList_Node *_node);
+bool                               LINKLIST_Clean(LinkList *_list);
+bool                               LINKLIST_AddStart(LinkList *_list, LinkList_Node *_node);
+bool                               LINKLIST_AddEnd(LinkList *_list, LinkList_Node *_node);
+bool                               LINKLIST_AddBefore(LinkList_Node *_refNode, LinkList_Node *_node);
+bool                               LINKLIST_AddAfter(LinkList_Node *_refNode, LinkList_Node *_node);
+bool                               LINKLIST_Remove(LinkList_Node *_node);
 
 static inline LinkList *                  LINKLIST_GetList(const LinkList_Node *_node)
 {
