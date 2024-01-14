@@ -11,3 +11,9 @@ You will then enter the arena. The aim is to jump on the other bunnies' heads…
 
 Jump 'n Bump was originally a DOS game by Brainchild Design, which was open
 sourced under the GPL license and ported to SDL, and then SDL2.
+
+## License
+
+Jump 'n Bump is distributed under the GNU General Public License, version 2, or
+(at your option) any later version (GPL-2.0+). See the AUTHORS file for
+credits.
