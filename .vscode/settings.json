@@ -4,5 +4,6 @@
         "*.c": "c"
     },
     "editor.detectIndentation": false,
-    "cmake.configureOnOpen": false
+    "cmake.configureOnOpen": false,
+    "C_Cpp.default.compilerPath": ""
 }
