@@ -75,6 +75,13 @@ int main(bool resetType) {
     // initialization
     VDP_setScreenWidth320();
 
+    if (JOY_getPortType(PORT_1) == PORT_TYPE_TEAMPLAYER) {
+        JOY_setSupport(PORT_1, JOY_SUPPORT_TEAMPLAYER);
+    }
+    if (JOY_getPortType(PORT_2) == PORT_TYPE_TEAMPLAYER) {
+        JOY_setSupport(PORT_2, JOY_SUPPORT_TEAMPLAYER);
+    }
+
     displayLogo();
     displaySgdkLogo();
 
@@ -166,29 +173,79 @@ int main(bool resetType) {
 }
 
 static void handleInput() {
-    for(u32 c1 = 0; c1 < JNB_MAX_PLAYERS; c1++) {
-        if (ai[c1]) continue;
-        u16 value = JOY_readJoypad(c1);
-        addkey(((KEY_PL1_JUMP + 0x10 * c1) & 0x7fff) | ((value & BUTTON_A) ? 0x0 : 0x8000));
-        addkey(((KEY_PL1_LEFT + 0x10 * c1) & 0x7fff) | ((value & BUTTON_LEFT) ? 0x0 : 0x8000));
-        addkey(((KEY_PL1_RIGHT + 0x10 * c1) & 0x7fff) | ((value & BUTTON_RIGHT) ? 0x0 : 0x8000));
+    if (JOY_getPortType(PORT_1) == PORT_TYPE_TEAMPLAYER) {
+        if (!ai[0]) {
+            u16 value = JOY_readJoypad(JOY_1);
+            addkey(((KEY_PL1_JUMP) & 0x7fff) | ((value & BUTTON_A) ? 0x0 : 0x8000));
+            addkey(((KEY_PL1_LEFT) & 0x7fff) | ((value & BUTTON_LEFT) ? 0x0 : 0x8000));
+            addkey(((KEY_PL1_RIGHT) & 0x7fff) | ((value & BUTTON_RIGHT) ? 0x0 : 0x8000));
+        }
+        if (!ai[1]) {
+            u16 value = JOY_readJoypad(JOY_3);
+            addkey(((KEY_PL1_JUMP + 0x10) & 0x7fff) | ((value & BUTTON_A) ? 0x0 : 0x8000));
+            addkey(((KEY_PL1_LEFT + 0x10) & 0x7fff) | ((value & BUTTON_LEFT) ? 0x0 : 0x8000));
+            addkey(((KEY_PL1_RIGHT + 0x10) & 0x7fff) | ((value & BUTTON_RIGHT) ? 0x0 : 0x8000));
+        }
+        if (!ai[2]) {
+            u16 value = JOY_readJoypad(JOY_4);
+            addkey(((KEY_PL1_JUMP + 0x20) & 0x7fff) | ((value & BUTTON_A) ? 0x0 : 0x8000));
+            addkey(((KEY_PL1_LEFT + 0x20) & 0x7fff) | ((value & BUTTON_LEFT) ? 0x0 : 0x8000));
+            addkey(((KEY_PL1_RIGHT + 0x20) & 0x7fff) | ((value & BUTTON_RIGHT) ? 0x0 : 0x8000));
+        }
+        if (!ai[2]) {
+            u16 value = JOY_readJoypad(JOY_5);
+            addkey(((KEY_PL1_JUMP + 0x30) & 0x7fff) | ((value & BUTTON_A) ? 0x0 : 0x8000));
+            addkey(((KEY_PL1_LEFT + 0x30) & 0x7fff) | ((value & BUTTON_LEFT) ? 0x0 : 0x8000));
+            addkey(((KEY_PL1_RIGHT + 0x30) & 0x7fff) | ((value & BUTTON_RIGHT) ? 0x0 : 0x8000));
+        }
+    } else if (JOY_getPortType(PORT_2) == PORT_TYPE_TEAMPLAYER) {
+        if (!ai[0]) {
+            u16 value = JOY_readJoypad(JOY_2);
+            addkey(((KEY_PL1_JUMP) & 0x7fff) | ((value & BUTTON_A) ? 0x0 : 0x8000));
+            addkey(((KEY_PL1_LEFT) & 0x7fff) | ((value & BUTTON_LEFT) ? 0x0 : 0x8000));
+            addkey(((KEY_PL1_RIGHT) & 0x7fff) | ((value & BUTTON_RIGHT) ? 0x0 : 0x8000));
+        }
+        if (!ai[1]) {
+            u16 value = JOY_readJoypad(JOY_6);
+            addkey(((KEY_PL1_JUMP + 0x10) & 0x7fff) | ((value & BUTTON_A) ? 0x0 : 0x8000));
+            addkey(((KEY_PL1_LEFT + 0x10) & 0x7fff) | ((value & BUTTON_LEFT) ? 0x0 : 0x8000));
+            addkey(((KEY_PL1_RIGHT + 0x10) & 0x7fff) | ((value & BUTTON_RIGHT) ? 0x0 : 0x8000));
+        }
+        if (!ai[2]) {
+            u16 value = JOY_readJoypad(JOY_7);
+            addkey(((KEY_PL1_JUMP + 0x20) & 0x7fff) | ((value & BUTTON_A) ? 0x0 : 0x8000));
+            addkey(((KEY_PL1_LEFT + 0x20) & 0x7fff) | ((value & BUTTON_LEFT) ? 0x0 : 0x8000));
+            addkey(((KEY_PL1_RIGHT + 0x20) & 0x7fff) | ((value & BUTTON_RIGHT) ? 0x0 : 0x8000));
+        }
+        if (!ai[2]) {
+            u16 value = JOY_readJoypad(JOY_8);
+            addkey(((KEY_PL1_JUMP + 0x30) & 0x7fff) | ((value & BUTTON_A) ? 0x0 : 0x8000));
+            addkey(((KEY_PL1_LEFT + 0x30) & 0x7fff) | ((value & BUTTON_LEFT) ? 0x0 : 0x8000));
+            addkey(((KEY_PL1_RIGHT + 0x30) & 0x7fff) | ((value & BUTTON_RIGHT) ? 0x0 : 0x8000));
+        }
+    } else {
+        if (!ai[0]) {
+            u16 value = JOY_readJoypad(JOY_1);
+            addkey(((KEY_PL1_JUMP) & 0x7fff) | ((value & BUTTON_A) ? 0x0 : 0x8000));
+            addkey(((KEY_PL1_LEFT) & 0x7fff) | ((value & BUTTON_LEFT) ? 0x0 : 0x8000));
+            addkey(((KEY_PL1_RIGHT) & 0x7fff) | ((value & BUTTON_RIGHT) ? 0x0 : 0x8000));
+        }
+        if (!ai[1]) {
+            u16 value = JOY_readJoypad(JOY_2);
+            addkey(((KEY_PL1_JUMP + 0x10) & 0x7fff) | ((value & BUTTON_A) ? 0x0 : 0x8000));
+            addkey(((KEY_PL1_LEFT + 0x10) & 0x7fff) | ((value & BUTTON_LEFT) ? 0x0 : 0x8000));
+            addkey(((KEY_PL1_RIGHT + 0x10) & 0x7fff) | ((value & BUTTON_RIGHT) ? 0x0 : 0x8000));
+        }
     }
 }
 
 static void displaySgdkLogo() {
-    SYS_disableInts();
     VDP_clearPlane(BG_B, TRUE);
-
-    // need to increase a bit DMA buffer size to init both plan tilemap and sprites
-    DMA_setBufferSize(10000);
-    DMA_setMaxTransferSize(10000);
 
     PAL_setColors(0, (u16*) palette_black, 64, DMA);
     memcpy(&palette[0], sgdk_logo.palette->data, sgdk_logo.palette->length * 2);
 
     VDP_drawBitmapEx(BG_B, &sgdk_logo, TILE_ATTR(PAL0, FALSE, FALSE, FALSE), 15, 9, FALSE);
-
-    SYS_doVBlankProcess();
 
     // can restore default DMA buffer size
     DMA_setBufferSizeToDefault();
@@ -199,18 +256,10 @@ static void displaySgdkLogo() {
     PAL_fadeOut(0, 63, 30, FALSE);
 
     VDP_clearPlane(BG_B, TRUE);
-    SYS_enableInts();
-
-    SYS_doVBlankProcess();
 }
 
 static void displayLogo() {
-    SYS_disableInts();
     VDP_clearPlane(BG_B, TRUE);
-
-    // need to increase a bit DMA buffer size to init both plan tilemap and sprites
-    DMA_setBufferSize(10000);
-    DMA_setMaxTransferSize(10000);
 
     PAL_setColors(0, (u16*) palette_black, 64, DMA);
     memcpy(&palette[0], image_logo.palette->data, 64 * 2);
@@ -218,21 +267,11 @@ static void displayLogo() {
     VDP_loadTileSet(image_logo.tileset, VDPTilesFilled, DMA);
     VDP_setTileMapEx(BG_B, image_logo.tilemap, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, VDPTilesFilled), 11, 6, 0, 0, 18, 16, DMA);
 
-    SYS_enableInts();
-    SYS_doVBlankProcess();
-
-    // can restore default DMA buffer size
-    DMA_setBufferSizeToDefault();
-    DMA_setMaxTransferSizeToDefault();
-
     PAL_fadeIn(0, 63, palette, 30, FALSE);
     JOY_waitPressTime(JOY_ALL, BUTTON_ALL, 5000);
     PAL_fadeOut(0, 63, 30, FALSE);
 
     VDP_clearPlane(BG_B, TRUE);
-    SYS_enableInts();
-
-    SYS_doVBlankProcess();
 }
 
 u16 rnd(const u16 max) {
