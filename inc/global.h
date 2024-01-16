@@ -49,7 +49,7 @@
 #define BAN_SPRING	4
 
 // #define NUM_OBJECTS 200
-#define NUM_OBJECTS 60
+#define NUM_OBJECTS 50
 
 struct {
     u16 joy;
