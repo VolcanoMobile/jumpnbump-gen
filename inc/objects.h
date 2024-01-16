@@ -13,7 +13,7 @@ typedef struct {
 	u16 frame;
     s16 ticks;
 	u16 image;
-    void (*update_ptr)(void*, const bool);
+    bool (*update_ptr)(void*, const bool);
 } object_t;
 
 typedef struct {

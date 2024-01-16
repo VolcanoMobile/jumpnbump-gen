@@ -5,7 +5,10 @@
 #include "objects.h"
 #include "resources.h"
 
+#define FULL_UPDATE_BUDGET 30
+
 static Bank* objects_bank;
+static object_t* firstObject = NULL;
 
 object_t springs[8];
 u16 springsCount;
@@ -55,6 +58,7 @@ void init_objects() {
 
 void clear_objects() {
     BANK_clear(objects_bank);
+    firstObject = NULL;
 }
 
 void load_objects_sprites() {
@@ -126,7 +130,7 @@ void load_objects_sprites() {
     }
 }
 
-static void update_splash(void* this, const bool _unused) {
+static bool update_splash(void* this, const bool _unused) {
     object_t* currentObject = (object_t*) this;
 
     currentObject->ticks--;
@@ -134,7 +138,7 @@ static void update_splash(void* this, const bool _unused) {
         currentObject->frame++;
         if (currentObject->frame >= object_anims[OBJ_ANIM_SPLASH].num_frames) {
             BANK_free(objects_bank, (void*)currentObject);
-            return;
+            return TRUE;
         } else {
             currentObject->ticks = object_anims[OBJ_ANIM_SPLASH].frame[currentObject->frame].ticks;
             currentObject->image = object_anims[OBJ_ANIM_SPLASH].frame[currentObject->frame].image;
@@ -151,9 +155,11 @@ static void update_splash(void* this, const bool _unused) {
     vdpSprite->link = vdpSpriteInd++;
     vdpSprite->attribut = TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, spritesTileInd[OBJ_SPLASH][imageInd]);
     vdpSprite++;
+
+    return FALSE;
 }
 
-static void update_smoke(void* this, const bool _unused) {
+static bool update_smoke(void* this, const bool _unused) {
     object_t* currentObject = (object_t*) this;
 
     currentObject->x += currentObject->x_add;
@@ -163,7 +169,7 @@ static void update_smoke(void* this, const bool _unused) {
         currentObject->frame++;
         if (currentObject->frame >= object_anims[OBJ_ANIM_SMOKE].num_frames) {
             BANK_free(objects_bank, (void*)currentObject);
-            return;
+            return TRUE;
         } else {
             currentObject->ticks = object_anims[OBJ_ANIM_SMOKE].frame[currentObject->frame].ticks;
             currentObject->image = object_anims[OBJ_ANIM_SMOKE].frame[currentObject->frame].image;
@@ -180,9 +186,11 @@ static void update_smoke(void* this, const bool _unused) {
     vdpSprite->link = vdpSpriteInd++;
     vdpSprite->attribut = TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, spritesTileInd[OBJ_SMOKE][imageInd]);
     vdpSprite++;
+
+    return FALSE;
 }
 
-static void update_butfly(void* this, const bool _unused) {
+static bool update_butfly(void* this, const bool _unused) {
     object_t* currentObject = (object_t*) this;
 
     currentObject->x_acc += rnd(128) - 64;
@@ -290,9 +298,11 @@ static void update_butfly(void* this, const bool _unused) {
     vdpSprite->link = vdpSpriteInd++;
     vdpSprite->attribut = TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, spritesTileInd[currentObject->type][imageInd]);
     vdpSprite++;
+
+    return FALSE;
 }
 
-static void update_fur(void* this, const bool partial_update) {
+static bool update_fur(void* this, const bool partial_update) {
     object_t* currentObject = (object_t*) this;
 
     if (partial_update) {
@@ -310,7 +320,7 @@ static void update_fur(void* this, const bool partial_update) {
         vdpSprite->attribut = TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, spritesTileInd[OBJ_FUR][imageInd]);
         vdpSprite++;
 
-        return;
+        return FALSE;
     }
 
     u16 tile = ban_map[currentObject->y >> 20][currentObject->x >> 20];
@@ -356,7 +366,7 @@ static void update_fur(void* this, const bool partial_update) {
 
     if (currentObject->x < (-5 << 16) || currentObject->x > (405 << 16) || currentObject->y > (260 << 16)) {
         BANK_free(objects_bank, (void*)currentObject);
-        return;
+        return TRUE;
     }
 
     if (rnd(100) < 30)
@@ -379,7 +389,7 @@ static void update_fur(void* this, const bool partial_update) {
                         currentObject->y_add = -currentObject->y_add >> 2;
                     } else {
                         BANK_free(objects_bank, (void*)currentObject);
-                        return;
+                        return TRUE;
                     }
                 } else if (tile == BAN_ICE) {
                     currentObject->y = ((((currentObject->y >> 16) - 16) & 0xfff0) + 15) << 16;
@@ -407,9 +417,11 @@ static void update_fur(void* this, const bool partial_update) {
     vdpSprite->link = vdpSpriteInd++;
     vdpSprite->attribut = TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, spritesTileInd[OBJ_FUR][imageInd]);
     vdpSprite++;
+
+    return FALSE;
 }
 
-static void update_flesh(void* this, const bool partial_update) {
+static bool update_flesh(void* this, const bool partial_update) {
     object_t* currentObject = (object_t*) this;
 
     if (partial_update == TRUE) {
@@ -428,7 +440,7 @@ static void update_flesh(void* this, const bool partial_update) {
         vdpSprite->attribut = TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, spritesTileInd[OBJ_FLESH][imageInd]);
         vdpSprite++;
 
-        return;
+        return FALSE;
     }
 
     u16 tile = ban_map[currentObject->y >> 20][currentObject->x >> 20];
@@ -473,7 +485,7 @@ static void update_flesh(void* this, const bool partial_update) {
     currentObject->y += currentObject->y_add;
     if (currentObject->x < (-5 << 16) || currentObject->x > (405 << 16) || currentObject->y > (260 << 16)) {
         BANK_free(objects_bank, (void*)currentObject);
-        return;
+        return TRUE;
     }
 
     if (rnd(100) < 30) {
@@ -507,7 +519,7 @@ static void update_flesh(void* this, const bool partial_update) {
                         // 	add_leftovers(1, currentObject->x >> 16, (currentObject->y >> 16) + s1, currentObject->frame, &object_gobs);
                         // }
                         BANK_free(objects_bank, (void*)currentObject);
-                        return;
+                        return TRUE;
                     }
                 } else if (tile == BAN_ICE) {
                     currentObject->y = ((((currentObject->y >> 16) - 16) & 0xfff0) + 15) << 16;
@@ -535,9 +547,11 @@ static void update_flesh(void* this, const bool partial_update) {
     vdpSprite->link = vdpSpriteInd++;
     vdpSprite->attribut = TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, spritesTileInd[OBJ_FLESH][imageInd]);
     vdpSprite++;
+
+    return FALSE;
 }
 
-static void update_flesh_trace(void* this, const bool _unused) {
+static bool update_flesh_trace(void* this, const bool _unused) {
     object_t* currentObject = (object_t*) this;
 
     currentObject->ticks--;
@@ -545,7 +559,7 @@ static void update_flesh_trace(void* this, const bool _unused) {
         currentObject->frame++;
         if (currentObject->frame >= object_anims[OBJ_ANIM_FLESH_TRACE].num_frames) {
             BANK_free(objects_bank, (void*)currentObject);
-            return;
+            return TRUE;
         } else {
             currentObject->ticks = object_anims[OBJ_ANIM_FLESH_TRACE].frame[currentObject->frame].ticks;
             currentObject->image = object_anims[OBJ_ANIM_FLESH_TRACE].frame[currentObject->frame].image;
@@ -562,9 +576,11 @@ static void update_flesh_trace(void* this, const bool _unused) {
     vdpSprite->link = vdpSpriteInd++;
     vdpSprite->attribut = TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, spritesTileInd[OBJ_FLESH_TRACE][imageInd]);
     vdpSprite++;
+
+    return FALSE;
 }
 
-static void (*updateFns[8])(void*, const bool) = {
+static bool (*updateFns[8])(void*, const bool) = {
     NULL, &update_splash, &update_smoke, &update_butfly, &update_butfly,
     &update_fur, &update_flesh, &update_flesh_trace
 };
@@ -637,11 +653,33 @@ void update_objects(void)
         currentSpring++;
     }
 
-    object_t* currentObject = (object_t*) BANK_getFirst(objects_bank);
-    while(currentObject != NULL) {
-        object_t* nextObject = (object_t*) BANK_getNext(objects_bank, (void*) currentObject);
-        currentObject->update_ptr(currentObject, partial_update);
-        currentObject = nextObject;
-        partial_update = !partial_update;
+    // object_t* currentObject = (object_t*) BANK_getFirst(objects_bank);
+    // while(currentObject != NULL) {
+    //     object_t* nextObject = (object_t*) BANK_getNext(objects_bank, (void*) currentObject);
+    //     currentObject->update_ptr(currentObject, partial_update);
+    //     currentObject = nextObject;
+    //     partial_update = !partial_update;
+    // }
+
+    object_t *current, *next;
+    s8 i;
+
+    for(i = FULL_UPDATE_BUDGET + 1, current = firstObject, next = current ? BANK_getNext(objects_bank, current) : BANK_getFirst(objects_bank);
+        TRUE;
+        i--, current = next, next = current ? BANK_getNext(objects_bank, current) : BANK_getFirst(objects_bank))
+    {
+        if(current && current->update_ptr(current, i <= 0))
+        {
+            // Deleted!
+            firstObject = next;
+        }
+        else
+        {
+            if(firstObject == next)
+            {
+                break;
+            }
+        }
     }
+    firstObject = next;
 }
