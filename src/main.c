@@ -17,7 +17,7 @@
 
 static int game_state = GAME_STATE_BOOT;
 
-int ai[JNB_MAX_PLAYERS];
+bool ai[JNB_MAX_PLAYERS];
 
 //Index of the last tile that has been placed, useful to avoid overlapping
 u16 VDPTilesFilled = TILE_USER_INDEX;
@@ -25,7 +25,7 @@ u16 palette[64];
 player_anim_t player_anims[7];
 player_t player[JNB_MAX_PLAYERS];
 
-int endscore_reached;
+u16 endscore_reached;
 
 // SAT pointer
 VDPSprite* vdpSprite;
@@ -56,7 +56,7 @@ static void initProgram() {
 
     for(u32 c1 = 0; c1 < JNB_MAX_PLAYERS; c1++)		// reset player values
     {
-        ai[c1] = 0;
+        ai[c1] = FALSE;
     }
 
     init_objects();
@@ -129,7 +129,7 @@ int main(bool resetType) {
 
             game_state = GAME_STATE_MENU;
         } else if (game_state == GAME_STATE_MENU) {
-            u32 ret = menuFrame();
+            u16 ret = menuFrame();
 
             if (ret == 1) {
                 menuFrame();
@@ -145,7 +145,40 @@ int main(bool resetType) {
                 game_state = GAME_STATE_GAME;
             }
         } else if (game_state == GAME_STATE_GAME) {
-            gameFrame();
+            u16 ret = gameFrame();
+
+            if (ret == 1) {
+                u16 c1;
+
+                for(c1 = 0; c1 < JNB_MAX_PLAYERS; c1++)
+                    if (player[c1].bumps >= JNB_END_SCORE)
+                        break;
+                
+                VDP_drawText("GAME OVER", 13, 11);
+                char buf[20];
+                sprintf(buf, "Player %d WIN!", c1 +1);
+                VDP_drawText(buf, 11, 12);
+                VDP_drawText("Press START to continue", 6, 14);
+
+                game_state = GAME_STATE_END;
+            }
+        } else if (game_state == GAME_STATE_END) {
+            JOY_waitPress(JOY_ALL, BUTTON_START);
+            PAL_fadeOutAll(30, FALSE);
+            unloadLevel();
+
+            loadMenu();
+            initMenu();
+            PAL_fadeInAll(palette, 30, TRUE);
+
+            // start music
+            if (SYS_isNTSC()) {
+                XGM_startPlay(jump_music_ntsc);
+            } else {
+                XGM_startPlay(jump_music_pal);
+            }
+
+            game_state = GAME_STATE_MENU;
         }
 
         // remove 1 to get number of hard sprite used

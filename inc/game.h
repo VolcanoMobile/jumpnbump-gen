@@ -2,4 +2,5 @@
 
 void loadLevel();
 void initLevel();
-u32 gameFrame();
+void unloadLevel();
+u16 gameFrame();

@@ -71,16 +71,17 @@ static void position_player(u32 player_num)
     }
 }
 
-void loadLevel() {
+void unloadLevel() {
     SYS_disableInts();
-    VDP_clearPlane(BG_A, TRUE);
     VDP_clearPlane(BG_B, TRUE);
+    VDP_clearPlane(BG_A, TRUE);
     SYS_enableInts();
 
-    // need to increase a bit DMA buffer size to init both plan tilemap and sprites
-    DMA_setBufferSize(10000);
-    DMA_setMaxTransferSize(10000);
+    springsCount = 0;
+    VDPTilesFilled -= image_level.tileset->numTile;
+}
 
+void loadLevel() {
     memcpy(&palette[0], image_level.palette->data, 16 * 2);
 
     VDP_loadTileSet(image_level.tileset, VDPTilesFilled, DMA);
@@ -89,10 +90,6 @@ void loadLevel() {
     VDPTilesFilled += image_level.tileset->numTile;
 
     SYS_doVBlankProcess();
-
-    // can restore default DMA buffer size
-    DMA_setBufferSizeToDefault();
-    DMA_setMaxTransferSizeToDefault();
 
     VDP_loadFont(&level_font, CPU);
     // re-pack memory as VDP_lontFont allocate memory to unpack font
@@ -973,12 +970,12 @@ static void collision_check(void)
 }
 
 
-u32 gameFrame() {
+u16 gameFrame() {
 
     steer_players();
     collision_check();
     updateRabbitsSprites(FALSE);
     update_objects();
 
-    return 0;
+    return endscore_reached;
 }
