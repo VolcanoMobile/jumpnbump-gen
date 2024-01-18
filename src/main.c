@@ -94,19 +94,10 @@ int main(bool resetType) {
 
     initProgram();
 
-    DMA_setBufferSize(10000);
-    DMA_setMaxTransferSize(10000);
-
     loadRabbits();
     load_objects_sprites();
 
     SYS_doVBlankProcess();
-
-    // can restore default DMA buffer size
-    DMA_setBufferSizeToDefault();
-    DMA_setMaxTransferSizeToDefault();
-
-    VDP_setTextPalette(PAL1);
 
     while(TRUE)
     {
@@ -154,6 +145,9 @@ int main(bool resetType) {
                     if (player[c1].bumps >= JNB_END_SCORE)
                         break;
                 
+                VDP_clearTileMapRect(BG_A, 5, 10, 25, 6);
+                VDP_clearTileMapRect(BG_B, 5, 10, 25, 6);
+                
                 VDP_drawText("GAME OVER", 13, 11);
                 char buf[20];
                 sprintf(buf, "Player %d WIN!", c1 +1);
@@ -163,22 +157,16 @@ int main(bool resetType) {
                 game_state = GAME_STATE_END;
             }
         } else if (game_state == GAME_STATE_END) {
+            // clear sprites
+            vdpSprite->y = 0;
+            vdpSprite->link = 0;
+            DMA_queueDmaFast(DMA_VRAM, vdpSpriteCache, VDP_SPRITE_TABLE, 1 * (sizeof(VDPSprite) / 2), 2);
+            
             JOY_waitPress(JOY_ALL, BUTTON_START);
             PAL_fadeOutAll(30, FALSE);
             unloadLevel();
 
-            loadMenu();
-            initMenu();
-            PAL_fadeInAll(palette, 30, TRUE);
-
-            // start music
-            if (SYS_isNTSC()) {
-                XGM_startPlay(jump_music_ntsc);
-            } else {
-                XGM_startPlay(jump_music_pal);
-            }
-
-            game_state = GAME_STATE_MENU;
+            game_state = GAME_STATE_BOOT;
         }
 
         // remove 1 to get number of hard sprite used
@@ -279,10 +267,6 @@ static void displaySgdkLogo() {
     memcpy(&palette[0], sgdk_logo.palette->data, sgdk_logo.palette->length * 2);
 
     VDP_drawBitmapEx(BG_B, &sgdk_logo, TILE_ATTR(PAL0, FALSE, FALSE, FALSE), 15, 9, FALSE);
-
-    // can restore default DMA buffer size
-    DMA_setBufferSizeToDefault();
-    DMA_setMaxTransferSizeToDefault();
 
     PAL_fadeIn(0, 63, palette, 30, FALSE);
     JOY_waitPressTime(JOY_ALL, BUTTON_ALL, 5000);

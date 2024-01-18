@@ -83,6 +83,7 @@ void unloadLevel() {
 
 void loadLevel() {
     memcpy(&palette[0], image_level.palette->data, 16 * 2);
+    palette[0] = RGB3_3_3_TO_VDPCOLOR(0, 0, 0);
 
     VDP_loadTileSet(image_level.tileset, VDPTilesFilled, DMA);
     VDP_setTileMapEx(BG_B, image_level.tilemap, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, VDPTilesFilled), 0, 0, 0, 0, 40, 28, DMA);

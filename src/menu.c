@@ -132,6 +132,7 @@ void initMenu() {
 
 void loadMenu() {
     memcpy(&palette[0], image_menu.palette->data, 16 * 2);
+    palette[0] = RGB3_3_3_TO_VDPCOLOR(0, 0, 0);
 
     VDP_loadTileSet(image_menu.tileset, VDPTilesFilled, DMA);
     VDP_setTileMapEx(BG_B, image_menu.tilemap, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, VDPTilesFilled), 0, 0, 0, 0, 40, 28, DMA);
