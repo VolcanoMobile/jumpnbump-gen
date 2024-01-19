@@ -127,20 +127,12 @@ void initMenu() {
     textTimeOut = 60;
 
     for(u16 c1 = 0; c1 < JNB_MAX_PLAYERS; c1++)		// set AI to false
-        ai[c1] = 0;
+        ai[c1] = FALSE;
 }
 
 void loadMenu() {
-    SYS_disableInts();
-    VDP_clearPlane(BG_A, TRUE);
-    VDP_clearPlane(BG_B, TRUE);
-    SYS_enableInts();
-    
-    // need to increase a bit DMA buffer size to init both plan tilemap and sprites
-    DMA_setBufferSize(10000);
-    DMA_setMaxTransferSize(10000);
-
     memcpy(&palette[0], image_menu.palette->data, 16 * 2);
+    palette[0] = RGB3_3_3_TO_VDPCOLOR(0, 0, 0);
 
     VDP_loadTileSet(image_menu.tileset, VDPTilesFilled, DMA);
     VDP_setTileMapEx(BG_B, image_menu.tilemap, TILE_ATTR_FULL(PAL0, FALSE, FALSE, FALSE, VDPTilesFilled), 0, 0, 0, 0, 40, 28, DMA);
@@ -148,10 +140,6 @@ void loadMenu() {
     VDPTilesFilled += image_menu.tileset->numTile;
 
     SYS_doVBlankProcess();
-
-    // can restore default DMA buffer size
-    DMA_setBufferSizeToDefault();
-    DMA_setMaxTransferSizeToDefault();
 
     VDP_loadFont(&font_default, CPU);
     // re-pack memory as VDP_lontFont allocate memory to unpack font
@@ -164,13 +152,16 @@ void loadMenu() {
 }
 
 void unloadMenu() {
+    SYS_disableInts();
     VDP_clearPlane(BG_B, TRUE);
     VDP_clearPlane(BG_A, TRUE);
+    SYS_enableInts();
+
     VDPTilesFilled -= image_menu.tileset->numTile;
     palette[31] = sprite_pallette.data[15];
 }
 
-u32 menuFrame() {
+u16 menuFrame() {
 
     update_player_actions();
     u16 enabledPlayers = 0;
@@ -482,7 +473,7 @@ u32 menuFrame() {
     {
         for(u16 c1 = 0; c1 < JNB_MAX_PLAYERS; c1++) {
             if (player[c1].enabled) continue;
-            ai[c1] = 1;
+            ai[c1] = TRUE;
             player[c1].enabled = 1;
             break;
         }

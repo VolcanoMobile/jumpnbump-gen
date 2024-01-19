@@ -3,4 +3,4 @@
 void initMenu();
 void loadMenu();
 void unloadMenu();
-u32 menuFrame();
+u16 menuFrame();
