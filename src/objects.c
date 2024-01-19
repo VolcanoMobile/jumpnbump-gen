@@ -203,11 +203,11 @@ static void update_butfly(void* this, const bool _unused) {
     if (currentObject->x_add > 32768)
         currentObject->x_add = 32768;
     currentObject->x += currentObject->x_add;
-    if (currentObject->x < (16 << 16)) {
+    if ((currentObject->x >> 16) < 16) {
         currentObject->x = 16 << 16;
         currentObject->x_add = -currentObject->x_add >> 2;
         currentObject->x_acc = 0;
-    } else if (currentObject->x > (350 << 16)) {
+    } else if ((currentObject->x >> 16) > 350) {
         currentObject->x = 350 << 16;
         currentObject->x_add = -currentObject->x_add >> 2;
         currentObject->x_acc = 0;
@@ -236,7 +236,7 @@ static void update_butfly(void* this, const bool _unused) {
         currentObject->y = 0;
         currentObject->y_add = -currentObject->y_add >> 2;
         currentObject->y_acc = 0;
-    } else if (currentObject->y > (255 << 16)) {
+    } else if ((currentObject->y >> 16) > 255) {
         currentObject->y = 255 << 16;
         currentObject->y_add = -currentObject->y_add >> 2;
         currentObject->y_acc = 0;
@@ -361,7 +361,7 @@ static void update_fur(void* this, const bool partial_update) {
     }
     currentObject->y += currentObject->y_add;
 
-    if (currentObject->x < (-5 << 16) || currentObject->x > (405 << 16) || currentObject->y > (260 << 16)) {
+    if ((currentObject->x >> 16) < -5 || (currentObject->x >> 16) > 405 || (currentObject->y >> 16) > 260) {
         BANK_free(objects_bank, (void*)currentObject);
         return;
     }
@@ -479,7 +479,7 @@ static void update_flesh(void* this, const bool partial_update) {
         }
     }
     currentObject->y += currentObject->y_add;
-    if (currentObject->x < (-5 << 16) || currentObject->x > (405 << 16) || currentObject->y > (260 << 16)) {
+    if ((currentObject->x >> 16) < -5 || (currentObject->x >> 16) > 405 || (currentObject->y >> 16) > 260) {
         BANK_free(objects_bank, (void*)currentObject);
         return;
     }
