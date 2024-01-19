@@ -10,6 +10,11 @@ static Bank* objects_bank;
 object_t springs[8];
 u16 springsCount;
 
+#define RANDOM_SPAWNER_SIZE  256
+static bool spawner[RANDOM_SPAWNER_SIZE];
+static u16 randomSpawnerInd = 0;
+static u16 randomSpawnerOffset = 1;
+
 const object_anim_t object_anims[8] = {
     {
         6, 0, // OBJ_ANIM_SPRING (spring.bmp)
@@ -51,6 +56,8 @@ static u16 spritesTileInd[8][32];
 
 void init_objects() {
     objects_bank = BANK_create(NUM_OBJECTS, sizeof(object_t));
+    for(u16 i = 0; i < RANDOM_SPAWNER_SIZE; i++)
+        spawner[i] = rnd(100) < 30;
 }
 
 void clear_objects() {
@@ -359,8 +366,9 @@ static void update_fur(void* this, const bool partial_update) {
         return;
     }
 
-    if (rnd(100) < 30)
+    if (spawner[randomSpawnerInd])
         add_object(OBJ_FLESH_TRACE, currentObject->x >> 16, currentObject->y >> 16, 0, 0, OBJ_ANIM_FLESH_TRACE, 0);
+    randomSpawnerInd = modu(randomSpawnerInd + randomSpawnerOffset, RANDOM_SPAWNER_SIZE);
     
     if ((currentObject->y >> 16) > 0) {
         tile = ban_map[currentObject->y >> 20][currentObject->x >> 20];
@@ -476,7 +484,7 @@ static void update_flesh(void* this, const bool partial_update) {
         return;
     }
 
-    if (rnd(100) < 30) {
+    if (spawner[randomSpawnerInd]) {
         if (currentObject->frame == 0)
             add_object(OBJ_FLESH_TRACE, currentObject->x >> 16, currentObject->y >> 16, 0, 0, OBJ_ANIM_FLESH_TRACE, 1);
         else if (currentObject->frame == 1)
@@ -484,6 +492,7 @@ static void update_flesh(void* this, const bool partial_update) {
         else if (currentObject->frame == 2)
             add_object(OBJ_FLESH_TRACE, currentObject->x >> 16, currentObject->y >> 16, 0, 0, OBJ_ANIM_FLESH_TRACE, 3);
     }
+    randomSpawnerInd = modu(randomSpawnerInd + randomSpawnerOffset, RANDOM_SPAWNER_SIZE);
 
     if ((currentObject->y >> 16) > 0) {
         tile = ban_map[currentObject->y >> 20][currentObject->x >> 20];
@@ -608,6 +617,9 @@ void update_objects(void)
 
     object_t* currentSpring = &springs[0];
     u16 currentSpringInd = springsCount;
+
+    randomSpawnerInd = rnd(RANDOM_SPAWNER_SIZE);
+    randomSpawnerOffset = rnd(RANDOM_SPAWNER_SIZE) + 1; 
 
     while (currentSpringInd--)
     {
