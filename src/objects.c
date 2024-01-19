@@ -661,25 +661,41 @@ void update_objects(void)
     //     partial_update = !partial_update;
     // }
 
-    object_t *current, *next;
-    s8 i;
+    object_t *current, *next, *firstFull;
+    u8 i = FULL_UPDATE_BUDGET;
 
-    for(i = FULL_UPDATE_BUDGET + 1, current = firstObject, next = current ? BANK_getNext(objects_bank, current) : BANK_getFirst(objects_bank);
-        TRUE;
-        i--, current = next, next = current ? BANK_getNext(objects_bank, current) : BANK_getFirst(objects_bank))
+    firstFull = firstObject;
+    // full updates
+    for(current = firstObject, next = current ? (object_t *)BANK_getNext(objects_bank, current) : (object_t *)BANK_getFirst(objects_bank);
+        i != 0;
+        i--, current = next, next = current ? (object_t *)BANK_getNext(objects_bank, current) : (object_t *)BANK_getFirst(objects_bank))
     {
-        if(current && current->update_ptr(current, i <= 0))
-        {
-            // Deleted!
-            firstObject = next;
-        }
-        else
-        {
-            if(firstObject == next)
-            {
-                break;
-            }
-        }
+      if(current && current->update_ptr(current, FALSE) && (current == firstObject))
+      {
+        // Deleted!
+        firstObject = next;
+        firstFull = next;
+      }
+      else if(next == firstObject)
+      {
+        current = next;
+        break;
+      }
     }
-    firstObject = next;
+    firstObject = current;
+
+    // partial updates
+    for(next = current ? (object_t *)BANK_getNext(objects_bank, current) : (object_t *)BANK_getFirst(objects_bank);
+        TRUE;
+        current = next, next = current ? (object_t *)BANK_getNext(objects_bank, current) : (object_t *)BANK_getFirst(objects_bank))
+    {
+      if(current)
+      {
+        current->update_ptr(current, TRUE);
+      }
+      if(next == firstFull) // loop done
+      {
+        break;
+      }
+    }
 }
