@@ -150,7 +150,7 @@ static void update_splash(void* this, const bool _unused) {
 
     u16 imageInd = currentObject->image;
     s16 x = divu(mulu((currentObject->x >> 16), 320), JNB_WIDTH) - objects_frame_hs[OBJ_SPLASH][imageInd].x;
-    s16 y = (mulu((currentObject->y >> 16), 224) / 256) - objects_frame_hs[OBJ_SPLASH][imageInd].y;
+    s16 y = (mulu((currentObject->y >> 16), 224) / JNB_HEIGHT) - objects_frame_hs[OBJ_SPLASH][imageInd].y;
 
     vdpSprite->y = y + 0x80;
     vdpSprite->x = x + 0x80;
@@ -179,7 +179,7 @@ static void update_smoke(void* this, const bool _unused) {
 
     u16 imageInd = currentObject->image;
     s16 x = divu(mulu((currentObject->x >> 16), 320), JNB_WIDTH) - objects_frame_hs[OBJ_SMOKE][imageInd].x;
-    s16 y = (mulu((currentObject->y >> 16), 224) / 256) - objects_frame_hs[OBJ_SMOKE][imageInd].y;
+    s16 y = (mulu((currentObject->y >> 16), 224) / JNB_HEIGHT) - objects_frame_hs[OBJ_SMOKE][imageInd].y;
 
     vdpSprite->y = y + 0x80;
     vdpSprite->x = x + 0x80;
@@ -289,7 +289,7 @@ static void update_butfly(void* this, const bool _unused) {
 
     u16 imageInd = currentObject->image;
     s16 x = divu(mulu((currentObject->x >> 16), 320), JNB_WIDTH) - objects_frame_hs[OBJ_YEL_BUTFLY][imageInd].x;
-    s16 y = (mulu((currentObject->y >> 16), 224) / 256) - objects_frame_hs[OBJ_YEL_BUTFLY][imageInd].y;
+    s16 y = (mulu((currentObject->y >> 16), 224) / JNB_HEIGHT) - objects_frame_hs[OBJ_YEL_BUTFLY][imageInd].y;
 
     vdpSprite->y = y + 0x80;
     vdpSprite->x = x + 0x80;
@@ -308,7 +308,7 @@ static void update_fur(void* this, const bool partial_update) {
 
         u16 imageInd = currentObject->frame + ((currentObject->x >> 16) % 8);
         s16 x = divu(mulu((currentObject->x >> 16), 320), JNB_WIDTH);
-        s16 y = mulu((currentObject->y >> 16), 224) / 256;
+        s16 y = mulu((currentObject->y >> 16), 224) / JNB_HEIGHT;
 
         vdpSprite->y = y + 0x80;
         vdpSprite->x = x + 0x80;
@@ -407,7 +407,7 @@ static void update_fur(void* this, const bool partial_update) {
 
     u16 imageInd = currentObject->frame + ((currentObject->x >> 16) % 8);
     s16 x = divu(mulu((currentObject->x >> 16), 320), JNB_WIDTH);
-    s16 y = mulu((currentObject->y >> 16), 224) / 256;
+    s16 y = mulu((currentObject->y >> 16), 224) / JNB_HEIGHT;
 
     vdpSprite->y = y + 0x80;
     vdpSprite->x = x + 0x80;
@@ -426,7 +426,7 @@ static void update_flesh(void* this, const bool partial_update) {
 
         u16 imageInd = currentObject->frame;
         s16 x = divu(mulu((currentObject->x >> 16), 320), JNB_WIDTH);
-        s16 y = mulu((currentObject->y >> 16), 224) / 256;
+        s16 y = mulu((currentObject->y >> 16), 224) / JNB_HEIGHT;
 
         vdpSprite->y = y + 0x80;
         vdpSprite->x = x + 0x80;
@@ -535,7 +535,7 @@ static void update_flesh(void* this, const bool partial_update) {
 
     u16 imageInd = currentObject->frame;
     s16 x = divu(mulu((currentObject->x >> 16), 320), JNB_WIDTH);
-    s16 y = mulu((currentObject->y >> 16), 224) / 256;
+    s16 y = mulu((currentObject->y >> 16), 224) / JNB_HEIGHT;
 
     vdpSprite->y = y + 0x80;
     vdpSprite->x = x + 0x80;
@@ -562,7 +562,7 @@ static void update_flesh_trace(void* this, const bool _unused) {
 
     u16 imageInd = currentObject->image;
     s16 x = divu(mulu((currentObject->x >> 16), 320), JNB_WIDTH);
-    s16 y = mulu((currentObject->y >> 16), 224) / 256;
+    s16 y = mulu((currentObject->y >> 16), 224) / JNB_HEIGHT;
 
     vdpSprite->y = y + 0x80;
     vdpSprite->x = x + 0x80;
