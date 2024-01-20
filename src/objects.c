@@ -306,7 +306,7 @@ static void update_fur(void* this, const bool partial_update) {
         currentObject->x += currentObject->x_add;
         currentObject->y += currentObject->y_add;
 
-        u16 imageInd = currentObject->frame + modu(currentObject->x >> 16, 8);
+        u16 imageInd = currentObject->frame + ((currentObject->x >> 16) % 8);
         s16 x = divu(mulu((currentObject->x >> 16), 320), JNB_WIDTH);
         s16 y = divu(mulu((currentObject->y >> 16), 224), JNB_HEIGHT);
 
@@ -368,7 +368,7 @@ static void update_fur(void* this, const bool partial_update) {
 
     if (spawner[randomSpawnerInd])
         add_object(OBJ_FLESH_TRACE, currentObject->x >> 16, currentObject->y >> 16, 0, 0, OBJ_ANIM_FLESH_TRACE, 0);
-    randomSpawnerInd = modu(randomSpawnerInd + randomSpawnerOffset, RANDOM_SPAWNER_SIZE);
+    randomSpawnerInd = (randomSpawnerInd + randomSpawnerOffset) % RANDOM_SPAWNER_SIZE;
     
     if ((currentObject->y >> 16) > 0) {
         tile = ban_map[currentObject->y >> 20][currentObject->x >> 20];
@@ -405,7 +405,7 @@ static void update_fur(void* this, const bool partial_update) {
     if (currentObject->x_add > 0 && currentObject->x_add < 16384)
         currentObject->x_add = 16384;
 
-    u16 imageInd = currentObject->frame + modu(currentObject->x >> 16, 8);
+    u16 imageInd = currentObject->frame + ((currentObject->x >> 16) % 8);
     s16 x = divu(mulu((currentObject->x >> 16), 320), JNB_WIDTH);
     s16 y = divu(mulu((currentObject->y >> 16), 224), JNB_HEIGHT);
 
@@ -492,7 +492,7 @@ static void update_flesh(void* this, const bool partial_update) {
         else if (currentObject->frame == 2)
             add_object(OBJ_FLESH_TRACE, currentObject->x >> 16, currentObject->y >> 16, 0, 0, OBJ_ANIM_FLESH_TRACE, 3);
     }
-    randomSpawnerInd = modu(randomSpawnerInd + randomSpawnerOffset, RANDOM_SPAWNER_SIZE);
+    randomSpawnerInd = (randomSpawnerInd + randomSpawnerOffset) % RANDOM_SPAWNER_SIZE;
 
     if ((currentObject->y >> 16) > 0) {
         tile = ban_map[currentObject->y >> 20][currentObject->x >> 20];
