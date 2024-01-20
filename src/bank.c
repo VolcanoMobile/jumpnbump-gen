@@ -12,17 +12,6 @@ struct __Bank_t
   void   *data[];
 };
 
-static inline u32 getTrailingZeroCount(u32 _value)
-{
-  u32 u32Result;
-
-  /* Uses intrinsic */
-  u32Result = (u32) __builtin_ctz(_value);
-
-  /* Done! */
-  return u32Result;
-}
-
 void BANK_clear(Bank *_bank)
 {
   memset(_bank->data, 0, _bank->count * _bank->size);
