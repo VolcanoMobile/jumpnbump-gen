@@ -764,8 +764,8 @@ static void player_kill(u32 c1, u32 c2)
             player[c2].frame_tick = 0;
             player[c2].image = player_anims[player[c2].anim].frame[player[c2].frame].image + player[c2].direction * 9;
 
-            u16 rndValuesInd = rnd(EXPLOSION_RANDOM_VALUES_SIZE);
-            u16 offset = rnd(EXPLOSION_RANDOM_VALUES_SIZE - 1) + 1;
+            u16 rndValuesInd = random() % EXPLOSION_RANDOM_VALUES_SIZE;
+            u16 offset = (random() % (EXPLOSION_RANDOM_VALUES_SIZE / 2)) + 1;
 
             s32* values = &explosions_values[rndValuesInd][0];
             add_object(OBJ_FUR, (x >> 16) + 6 + values[0], (y >> 16) + 6 + values[1], values[2], values[3], 0, c2 * 8);
