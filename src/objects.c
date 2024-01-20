@@ -13,6 +13,11 @@ static object_t* firstObject = NULL;
 object_t springs[8];
 u16 springsCount;
 
+#define RANDOM_SPAWNER_SIZE  256
+static bool spawner[RANDOM_SPAWNER_SIZE];
+static u16 randomSpawnerInd = 0;
+static u16 randomSpawnerOffset = 1;
+
 const object_anim_t object_anims[8] = {
     {
         6, 0, // OBJ_ANIM_SPRING (spring.bmp)
@@ -54,6 +59,8 @@ static u16 spritesTileInd[8][32];
 
 void init_objects() {
     objects_bank = BANK_create(NUM_OBJECTS, sizeof(object_t));
+    for(u16 i = 0; i < RANDOM_SPAWNER_SIZE; i++)
+        spawner[i] = rnd(100) < 30;
 }
 
 void clear_objects() {
@@ -204,11 +211,11 @@ static bool update_butfly(void* this, const bool _unused) {
     if (currentObject->x_add > 32768)
         currentObject->x_add = 32768;
     currentObject->x += currentObject->x_add;
-    if (currentObject->x < (16 << 16)) {
+    if ((currentObject->x >> 16) < 16) {
         currentObject->x = 16 << 16;
         currentObject->x_add = -currentObject->x_add >> 2;
         currentObject->x_acc = 0;
-    } else if (currentObject->x > (350 << 16)) {
+    } else if ((currentObject->x >> 16) > 350) {
         currentObject->x = 350 << 16;
         currentObject->x_add = -currentObject->x_add >> 2;
         currentObject->x_acc = 0;
@@ -237,7 +244,7 @@ static bool update_butfly(void* this, const bool _unused) {
         currentObject->y = 0;
         currentObject->y_add = -currentObject->y_add >> 2;
         currentObject->y_acc = 0;
-    } else if (currentObject->y > (255 << 16)) {
+    } else if ((currentObject->y >> 16) > 255) {
         currentObject->y = 255 << 16;
         currentObject->y_add = -currentObject->y_add >> 2;
         currentObject->y_acc = 0;
@@ -364,13 +371,14 @@ static bool update_fur(void* this, const bool partial_update) {
     }
     currentObject->y += currentObject->y_add;
 
-    if (currentObject->x < (-5 << 16) || currentObject->x > (405 << 16) || currentObject->y > (260 << 16)) {
+    if ((currentObject->x >> 16) < -5 || (currentObject->x >> 16) > 405 || (currentObject->y >> 16) > 260) {
         BANK_free(objects_bank, (void*)currentObject);
         return TRUE;
     }
 
-    if (rnd(100) < 30)
+    if (spawner[randomSpawnerInd])
         add_object(OBJ_FLESH_TRACE, currentObject->x >> 16, currentObject->y >> 16, 0, 0, OBJ_ANIM_FLESH_TRACE, 0);
+    randomSpawnerInd = modu(randomSpawnerInd + randomSpawnerOffset, RANDOM_SPAWNER_SIZE);
     
     if ((currentObject->y >> 16) > 0) {
         tile = ban_map[currentObject->y >> 20][currentObject->x >> 20];
@@ -483,12 +491,12 @@ static bool update_flesh(void* this, const bool partial_update) {
         }
     }
     currentObject->y += currentObject->y_add;
-    if (currentObject->x < (-5 << 16) || currentObject->x > (405 << 16) || currentObject->y > (260 << 16)) {
+    if ((currentObject->x >> 16) < -5 || (currentObject->x >> 16) > 405 || (currentObject->y >> 16) > 260) {
         BANK_free(objects_bank, (void*)currentObject);
         return TRUE;
     }
 
-    if (rnd(100) < 30) {
+    if (spawner[randomSpawnerInd]) {
         if (currentObject->frame == 0)
             add_object(OBJ_FLESH_TRACE, currentObject->x >> 16, currentObject->y >> 16, 0, 0, OBJ_ANIM_FLESH_TRACE, 1);
         else if (currentObject->frame == 1)
@@ -496,6 +504,7 @@ static bool update_flesh(void* this, const bool partial_update) {
         else if (currentObject->frame == 2)
             add_object(OBJ_FLESH_TRACE, currentObject->x >> 16, currentObject->y >> 16, 0, 0, OBJ_ANIM_FLESH_TRACE, 3);
     }
+    randomSpawnerInd = modu(randomSpawnerInd + randomSpawnerOffset, RANDOM_SPAWNER_SIZE);
 
     if ((currentObject->y >> 16) > 0) {
         tile = ban_map[currentObject->y >> 20][currentObject->x >> 20];
@@ -624,6 +633,9 @@ void update_objects(void)
 
     object_t* currentSpring = &springs[0];
     u16 currentSpringInd = springsCount;
+
+    randomSpawnerInd = rnd(RANDOM_SPAWNER_SIZE);
+    randomSpawnerOffset = rnd(RANDOM_SPAWNER_SIZE - 1) + 1; 
 
     while (currentSpringInd--)
     {
