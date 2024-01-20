@@ -154,7 +154,7 @@ static bool update_splash(void* this, const bool _unused) {
 
     u16 imageInd = currentObject->image;
     s16 x = divu(mulu((currentObject->x >> 16), 320), JNB_WIDTH) - objects_frame_hs[OBJ_SPLASH][imageInd].x;
-    s16 y = divu(mulu((currentObject->y >> 16), 224), JNB_HEIGHT) - objects_frame_hs[OBJ_SPLASH][imageInd].y;
+    s16 y = (mulu((currentObject->y >> 16), 224) / JNB_HEIGHT) - objects_frame_hs[OBJ_SPLASH][imageInd].y;
 
     vdpSprite->y = y + 0x80;
     vdpSprite->x = x + 0x80;
@@ -185,7 +185,7 @@ static bool update_smoke(void* this, const bool _unused) {
 
     u16 imageInd = currentObject->image;
     s16 x = divu(mulu((currentObject->x >> 16), 320), JNB_WIDTH) - objects_frame_hs[OBJ_SMOKE][imageInd].x;
-    s16 y = divu(mulu((currentObject->y >> 16), 224), JNB_HEIGHT) - objects_frame_hs[OBJ_SMOKE][imageInd].y;
+    s16 y = (mulu((currentObject->y >> 16), 224) / JNB_HEIGHT) - objects_frame_hs[OBJ_SMOKE][imageInd].y;
 
     vdpSprite->y = y + 0x80;
     vdpSprite->x = x + 0x80;
@@ -200,7 +200,7 @@ static bool update_smoke(void* this, const bool _unused) {
 static bool update_butfly(void* this, const bool _unused) {
     object_t* currentObject = (object_t*) this;
 
-    currentObject->x_acc += rnd(128) - 64;
+    currentObject->x_acc += (random() % 128) - 64;
     if (currentObject->x_acc < -1024)
         currentObject->x_acc = -1024;
     if (currentObject->x_acc > 1024)
@@ -229,7 +229,7 @@ static bool update_butfly(void* this, const bool _unused) {
         currentObject->x_add = -currentObject->x_add >> 2;
         currentObject->x_acc = 0;
     }
-    currentObject->y_acc += rnd(64) - 32;
+    currentObject->y_acc += (random() % 64) - 32;
     if (currentObject->y_acc < -1024)
         currentObject->y_acc = -1024;
     if (currentObject->y_acc > 1024)
@@ -297,7 +297,7 @@ static bool update_butfly(void* this, const bool _unused) {
 
     u16 imageInd = currentObject->image;
     s16 x = divu(mulu((currentObject->x >> 16), 320), JNB_WIDTH) - objects_frame_hs[OBJ_YEL_BUTFLY][imageInd].x;
-    s16 y = divu(mulu((currentObject->y >> 16), 224), JNB_HEIGHT) - objects_frame_hs[OBJ_YEL_BUTFLY][imageInd].y;
+    s16 y = (mulu((currentObject->y >> 16), 224) / JNB_HEIGHT) - objects_frame_hs[OBJ_YEL_BUTFLY][imageInd].y;
 
     vdpSprite->y = y + 0x80;
     vdpSprite->x = x + 0x80;
@@ -316,9 +316,9 @@ static bool update_fur(void* this, const bool partial_update) {
         currentObject->x += currentObject->x_add;
         currentObject->y += currentObject->y_add;
 
-        u16 imageInd = currentObject->frame + modu(currentObject->x >> 16, 8);
+        u16 imageInd = currentObject->frame + ((currentObject->x >> 16) % 8);
         s16 x = divu(mulu((currentObject->x >> 16), 320), JNB_WIDTH);
-        s16 y = divu(mulu((currentObject->y >> 16), 224), JNB_HEIGHT);
+        s16 y = mulu((currentObject->y >> 16), 224) / JNB_HEIGHT;
 
         vdpSprite->y = y + 0x80;
         vdpSprite->x = x + 0x80;
@@ -378,7 +378,7 @@ static bool update_fur(void* this, const bool partial_update) {
 
     if (spawner[randomSpawnerInd])
         add_object(OBJ_FLESH_TRACE, currentObject->x >> 16, currentObject->y >> 16, 0, 0, OBJ_ANIM_FLESH_TRACE, 0);
-    randomSpawnerInd = modu(randomSpawnerInd + randomSpawnerOffset, RANDOM_SPAWNER_SIZE);
+    randomSpawnerInd = (randomSpawnerInd + randomSpawnerOffset) % RANDOM_SPAWNER_SIZE;
     
     if ((currentObject->y >> 16) > 0) {
         tile = ban_map[currentObject->y >> 20][currentObject->x >> 20];
@@ -415,9 +415,9 @@ static bool update_fur(void* this, const bool partial_update) {
     if (currentObject->x_add > 0 && currentObject->x_add < 16384)
         currentObject->x_add = 16384;
 
-    u16 imageInd = currentObject->frame + modu(currentObject->x >> 16, 8);
+    u16 imageInd = currentObject->frame + ((currentObject->x >> 16) % 8);
     s16 x = divu(mulu((currentObject->x >> 16), 320), JNB_WIDTH);
-    s16 y = divu(mulu((currentObject->y >> 16), 224), JNB_HEIGHT);
+    s16 y = mulu((currentObject->y >> 16), 224) / JNB_HEIGHT;
 
     vdpSprite->y = y + 0x80;
     vdpSprite->x = x + 0x80;
@@ -433,13 +433,12 @@ static bool update_flesh(void* this, const bool partial_update) {
     object_t* currentObject = (object_t*) this;
 
     if (partial_update == TRUE) {
-
         currentObject->x += currentObject->x_add;
         currentObject->y += currentObject->y_add;
 
         u16 imageInd = currentObject->frame;
         s16 x = divu(mulu((currentObject->x >> 16), 320), JNB_WIDTH);
-        s16 y = divu(mulu((currentObject->y >> 16), 224), JNB_HEIGHT);
+        s16 y = mulu((currentObject->y >> 16), 224) / JNB_HEIGHT;
 
         vdpSprite->y = y + 0x80;
         vdpSprite->x = x + 0x80;
@@ -504,7 +503,7 @@ static bool update_flesh(void* this, const bool partial_update) {
         else if (currentObject->frame == 2)
             add_object(OBJ_FLESH_TRACE, currentObject->x >> 16, currentObject->y >> 16, 0, 0, OBJ_ANIM_FLESH_TRACE, 3);
     }
-    randomSpawnerInd = modu(randomSpawnerInd + randomSpawnerOffset, RANDOM_SPAWNER_SIZE);
+    randomSpawnerInd = (randomSpawnerInd + randomSpawnerOffset) % RANDOM_SPAWNER_SIZE;
 
     if ((currentObject->y >> 16) > 0) {
         tile = ban_map[currentObject->y >> 20][currentObject->x >> 20];
@@ -548,7 +547,7 @@ static bool update_flesh(void* this, const bool partial_update) {
 
     u16 imageInd = currentObject->frame;
     s16 x = divu(mulu((currentObject->x >> 16), 320), JNB_WIDTH);
-    s16 y = divu(mulu((currentObject->y >> 16), 224), JNB_HEIGHT);
+    s16 y = mulu((currentObject->y >> 16), 224) / JNB_HEIGHT;
 
     vdpSprite->y = y + 0x80;
     vdpSprite->x = x + 0x80;
@@ -577,7 +576,7 @@ static bool update_flesh_trace(void* this, const bool _unused) {
 
     u16 imageInd = currentObject->image;
     s16 x = divu(mulu((currentObject->x >> 16), 320), JNB_WIDTH);
-    s16 y = divu(mulu((currentObject->y >> 16), 224), JNB_HEIGHT);
+    s16 y = mulu((currentObject->y >> 16), 224) / JNB_HEIGHT;
 
     vdpSprite->y = y + 0x80;
     vdpSprite->x = x + 0x80;
@@ -632,8 +631,8 @@ void update_objects(void)
     object_t* currentSpring = &springs[0];
     u16 currentSpringInd = springsCount;
 
-    randomSpawnerInd = rnd(RANDOM_SPAWNER_SIZE);
-    randomSpawnerOffset = rnd(RANDOM_SPAWNER_SIZE - 1) + 1; 
+    randomSpawnerInd = random() % RANDOM_SPAWNER_SIZE;
+    randomSpawnerOffset = (random() % (RANDOM_SPAWNER_SIZE / 2)) + 1; 
 
     while (currentSpringInd--)
     {
