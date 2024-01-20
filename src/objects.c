@@ -629,8 +629,6 @@ void add_spring(int x, int y, int x_add, int y_add, int frame) {
 
 void update_objects(void)
 {
-    static bool partial_update = FALSE;
-
     object_t* currentSpring = &springs[0];
     u16 currentSpringInd = springsCount;
 
@@ -665,49 +663,35 @@ void update_objects(void)
         currentSpring++;
     }
 
-    // object_t* currentObject = (object_t*) BANK_getFirst(objects_bank);
-    // while(currentObject != NULL) {
-    //     object_t* nextObject = (object_t*) BANK_getNext(objects_bank, (void*) currentObject);
-    //     currentObject->update_ptr(currentObject, partial_update);
-    //     currentObject = nextObject;
-    //     partial_update = !partial_update;
-    // }
+    const s16 max = 30;
 
-    object_t *current, *next, *firstFull;
-    u8 i = FULL_UPDATE_BUDGET;
+    object_t *current, *next, *new_first;
+    bool stop;
+    s16 i;
 
-    firstFull = firstObject;
-    // full updates
-    for(current = firstObject, next = current ? (object_t *)BANK_getNext(objects_bank, current) : (object_t *)BANK_getFirst(objects_bank);
-        i != 0;
-        i--, current = next, next = current ? (object_t *)BANK_getNext(objects_bank, current) : (object_t *)BANK_getFirst(objects_bank))
-    {
-      if(current && current->update_ptr(current, FALSE) && (current == firstObject))
-      {
-        // Deleted!
-        firstObject = next;
-        firstFull = next;
-      }
-      else if(next == firstObject)
-      {
-        current = next;
-        break;
-      }
-    }
-    firstObject = current;
-
-    // partial updates
-    for(next = current ? (object_t *)BANK_getNext(objects_bank, current) : (object_t *)BANK_getFirst(objects_bank);
-        TRUE;
+    for(i = max, stop = FALSE, new_first = current = firstObject, next = current ? (object_t *)BANK_getNext(objects_bank, current) : (object_t *)BANK_getFirst(objects_bank);
+        !stop;
         current = next, next = current ? (object_t *)BANK_getNext(objects_bank, current) : (object_t *)BANK_getFirst(objects_bank))
     {
-      if(current)
-      {
-        current->update_ptr(current, TRUE);
-      }
-      if(next == firstFull) // loop done
-      {
-        break;
-      }
+        if(next == firstObject)
+        {
+            stop = TRUE;
+        }
+        if(current && current->update_ptr(current, i-- <= 0))
+        {
+            if(current == firstObject)
+            {
+                firstObject = next;
+            }
+            if(current == new_first)
+            {
+                new_first = next;
+            }
+        }
+        if(i == 0)
+        {
+            new_first = next;
+        }
     }
+    firstObject = new_first;    
 }
