@@ -99,6 +99,8 @@ void initMenu() {
         player[c1].frame = 0;
         player[c1].frame_tick = 0;
         player[c1].image = player_anims[0].frame[0].image;
+
+        ai[c1] = FALSE; // set AI to false
     }
 
     ban_map = (u16 (*)[32])menu_map;
@@ -125,9 +127,6 @@ void initMenu() {
     new_game_flag = 0;
     cur_message = 0;
     textTimeOut = 60;
-
-    for(u16 c1 = 0; c1 < JNB_MAX_PLAYERS; c1++)		// set AI to false
-        ai[c1] = FALSE;
 }
 
 void loadMenu() {
@@ -164,7 +163,6 @@ void unloadMenu() {
 u16 menuFrame() {
 
     update_player_actions();
-    u16 enabledPlayers = 0;
 
     for (s32 c1 = 0; c1 < JNB_MAX_PLAYERS; c1++) {
         if (new_game_flag == 1) {
@@ -183,7 +181,6 @@ u16 menuFrame() {
                     player[c1].image = player_anims[player[c1].anim].frame[player[c1].frame].image + player[c1].direction * 9;
                 }
                 player[c1].enabled = 1;
-                enabledPlayers++;
             }
             if (!player[c1].action_up) {
                 if (player[c1].y_add < 0) {
@@ -467,16 +464,6 @@ u16 menuFrame() {
             player[c1].frame_tick = 0;
         }
         player[c1].image = player_anims[player[c1].anim].frame[player[c1].frame].image + player[c1].direction * 9;
-    }
-
-    if (enabledPlayers == 1)
-    {
-        for(u16 c1 = 0; c1 < JNB_MAX_PLAYERS; c1++) {
-            if (player[c1].enabled) continue;
-            ai[c1] = TRUE;
-            player[c1].enabled = 1;
-            break;
-        }
     }
 
     updateRabbitsSprites(TRUE);

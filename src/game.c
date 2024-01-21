@@ -11,7 +11,8 @@
 #define GET_BAN_MAP_XY(x,y) ban_map[(u16)((y) >> 4)][(u16)((x) >> 4)]
 #define GET_BAN_MAP_IN_WATER(s1, s2) (GET_BAN_MAP_XY((s1), ((s2) + 7)) == BAN_VOID || GET_BAN_MAP_XY(((s1) + 15), ((s2) + 7)) == BAN_VOID) && (GET_BAN_MAP_XY((s1), ((s2) + 8)) == BAN_WATER || GET_BAN_MAP_XY(((s1) + 15), ((s2) + 8)) == BAN_WATER)
 
-int pogostick, bunnies_in_space, jetpack, lord_of_the_flies, blood_is_thicker_than_water;
+static int pogostick, bunnies_in_space, jetpack, lord_of_the_flies, blood_is_thicker_than_water;
+static u16 endscore_reached;
 
 static const u16 level_map[32][32] = {
     {1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -100,6 +101,22 @@ void loadLevel() {
 void initLevel() {
     ban_map = (u16 (*)[32])level_map;
 
+    u8 enabledPlayers = 0;
+    for (u32 c1 = 0; c1 < JNB_MAX_PLAYERS; c1++) {
+        if (player[c1].enabled == 1)
+            enabledPlayers++;
+    }
+
+    if (enabledPlayers == 1) {
+        for(u16 c1 = 0; c1 < JNB_MAX_PLAYERS; c1++) {
+            if (player[c1].enabled) continue;
+            ai[c1] = TRUE;
+            player[c1].enabled = 1;
+            break;
+        }        
+    }
+    
+
     for (u32 c1 = 0; c1 < JNB_MAX_PLAYERS; c1++) {
         if (player[c1].enabled == 1) {
             player[c1].bumps = 0;
@@ -160,6 +177,7 @@ void initLevel() {
         }
     }
 
+    endscore_reached = 0;
     lord_of_the_flies = bunnies_in_space = jetpack = pogostick = blood_is_thicker_than_water = 0;
 }
 

@@ -25,7 +25,8 @@ u16 palette[64];
 player_anim_t player_anims[7];
 player_t player[JNB_MAX_PLAYERS];
 
-u16 endscore_reached;
+static u16 portMapping[4];
+
 
 // SAT pointer
 VDPSprite* vdpSprite;
@@ -82,6 +83,23 @@ int main(bool resetType) {
         JOY_setSupport(PORT_2, JOY_SUPPORT_TEAMPLAYER);
     }
 
+    if (JOY_getPortType(PORT_1) == PORT_TYPE_EA4WAYPLAY || JOY_getPortType(PORT_1) == PORT_TYPE_TEAMPLAYER) {
+        portMapping[0] = JOY_1;
+        portMapping[1] = JOY_3;
+        portMapping[2] = JOY_4;
+        portMapping[3] = JOY_5;        
+    } else if (JOY_getPortType(PORT_2) == PORT_TYPE_TEAMPLAYER) {
+        portMapping[0] = JOY_2;
+        portMapping[1] = JOY_6;
+        portMapping[2] = JOY_7;
+        portMapping[3] = JOY_8;        
+    } else {
+        portMapping[0] = JOY_1;
+        portMapping[1] = JOY_2;
+        portMapping[2] = JOY_7;
+        portMapping[3] = JOY_8;
+    }
+
     displayLogo();
     displaySgdkLogo();
 
@@ -131,7 +149,6 @@ int main(bool resetType) {
                 loadLevel();
                 initLevel();
                 PAL_fadeInAll(palette, 30, TRUE);
-                endscore_reached = 0;
 
                 game_state = GAME_STATE_GAME;
             }
@@ -194,69 +211,29 @@ int main(bool resetType) {
 }
 
 static void handleInput() {
-    if (JOY_getPortType(PORT_1) == PORT_TYPE_TEAMPLAYER) {
-        if (!ai[0]) {
-            u16 value = JOY_readJoypad(JOY_1);
-            addkey(((KEY_PL1_JUMP) & 0x7fff) | ((value & BUTTON_A) ? 0x0 : 0x8000));
-            addkey(((KEY_PL1_LEFT) & 0x7fff) | ((value & BUTTON_LEFT) ? 0x0 : 0x8000));
-            addkey(((KEY_PL1_RIGHT) & 0x7fff) | ((value & BUTTON_RIGHT) ? 0x0 : 0x8000));
-        }
-        if (!ai[1]) {
-            u16 value = JOY_readJoypad(JOY_3);
-            addkey(((KEY_PL1_JUMP + 0x10) & 0x7fff) | ((value & BUTTON_A) ? 0x0 : 0x8000));
-            addkey(((KEY_PL1_LEFT + 0x10) & 0x7fff) | ((value & BUTTON_LEFT) ? 0x0 : 0x8000));
-            addkey(((KEY_PL1_RIGHT + 0x10) & 0x7fff) | ((value & BUTTON_RIGHT) ? 0x0 : 0x8000));
-        }
-        if (!ai[2]) {
-            u16 value = JOY_readJoypad(JOY_4);
-            addkey(((KEY_PL1_JUMP + 0x20) & 0x7fff) | ((value & BUTTON_A) ? 0x0 : 0x8000));
-            addkey(((KEY_PL1_LEFT + 0x20) & 0x7fff) | ((value & BUTTON_LEFT) ? 0x0 : 0x8000));
-            addkey(((KEY_PL1_RIGHT + 0x20) & 0x7fff) | ((value & BUTTON_RIGHT) ? 0x0 : 0x8000));
-        }
-        if (!ai[2]) {
-            u16 value = JOY_readJoypad(JOY_5);
-            addkey(((KEY_PL1_JUMP + 0x30) & 0x7fff) | ((value & BUTTON_A) ? 0x0 : 0x8000));
-            addkey(((KEY_PL1_LEFT + 0x30) & 0x7fff) | ((value & BUTTON_LEFT) ? 0x0 : 0x8000));
-            addkey(((KEY_PL1_RIGHT + 0x30) & 0x7fff) | ((value & BUTTON_RIGHT) ? 0x0 : 0x8000));
-        }
-    } else if (JOY_getPortType(PORT_2) == PORT_TYPE_TEAMPLAYER) {
-        if (!ai[0]) {
-            u16 value = JOY_readJoypad(JOY_2);
-            addkey(((KEY_PL1_JUMP) & 0x7fff) | ((value & BUTTON_A) ? 0x0 : 0x8000));
-            addkey(((KEY_PL1_LEFT) & 0x7fff) | ((value & BUTTON_LEFT) ? 0x0 : 0x8000));
-            addkey(((KEY_PL1_RIGHT) & 0x7fff) | ((value & BUTTON_RIGHT) ? 0x0 : 0x8000));
-        }
-        if (!ai[1]) {
-            u16 value = JOY_readJoypad(JOY_6);
-            addkey(((KEY_PL1_JUMP + 0x10) & 0x7fff) | ((value & BUTTON_A) ? 0x0 : 0x8000));
-            addkey(((KEY_PL1_LEFT + 0x10) & 0x7fff) | ((value & BUTTON_LEFT) ? 0x0 : 0x8000));
-            addkey(((KEY_PL1_RIGHT + 0x10) & 0x7fff) | ((value & BUTTON_RIGHT) ? 0x0 : 0x8000));
-        }
-        if (!ai[2]) {
-            u16 value = JOY_readJoypad(JOY_7);
-            addkey(((KEY_PL1_JUMP + 0x20) & 0x7fff) | ((value & BUTTON_A) ? 0x0 : 0x8000));
-            addkey(((KEY_PL1_LEFT + 0x20) & 0x7fff) | ((value & BUTTON_LEFT) ? 0x0 : 0x8000));
-            addkey(((KEY_PL1_RIGHT + 0x20) & 0x7fff) | ((value & BUTTON_RIGHT) ? 0x0 : 0x8000));
-        }
-        if (!ai[2]) {
-            u16 value = JOY_readJoypad(JOY_8);
-            addkey(((KEY_PL1_JUMP + 0x30) & 0x7fff) | ((value & BUTTON_A) ? 0x0 : 0x8000));
-            addkey(((KEY_PL1_LEFT + 0x30) & 0x7fff) | ((value & BUTTON_LEFT) ? 0x0 : 0x8000));
-            addkey(((KEY_PL1_RIGHT + 0x30) & 0x7fff) | ((value & BUTTON_RIGHT) ? 0x0 : 0x8000));
-        }
-    } else {
-        if (!ai[0]) {
-            u16 value = JOY_readJoypad(JOY_1);
-            addkey(((KEY_PL1_JUMP) & 0x7fff) | ((value & BUTTON_A) ? 0x0 : 0x8000));
-            addkey(((KEY_PL1_LEFT) & 0x7fff) | ((value & BUTTON_LEFT) ? 0x0 : 0x8000));
-            addkey(((KEY_PL1_RIGHT) & 0x7fff) | ((value & BUTTON_RIGHT) ? 0x0 : 0x8000));
-        }
-        if (!ai[1]) {
-            u16 value = JOY_readJoypad(JOY_2);
-            addkey(((KEY_PL1_JUMP + 0x10) & 0x7fff) | ((value & BUTTON_A) ? 0x0 : 0x8000));
-            addkey(((KEY_PL1_LEFT + 0x10) & 0x7fff) | ((value & BUTTON_LEFT) ? 0x0 : 0x8000));
-            addkey(((KEY_PL1_RIGHT + 0x10) & 0x7fff) | ((value & BUTTON_RIGHT) ? 0x0 : 0x8000));
-        }
+    if (!ai[0]) {
+        u16 value = JOY_readJoypad(portMapping[0]);
+        addkey(((KEY_PL1_JUMP) & 0x7fff) | ((value & BUTTON_A) ? 0x0 : 0x8000));
+        addkey(((KEY_PL1_LEFT) & 0x7fff) | ((value & BUTTON_LEFT) ? 0x0 : 0x8000));
+        addkey(((KEY_PL1_RIGHT) & 0x7fff) | ((value & BUTTON_RIGHT) ? 0x0 : 0x8000));
+    }
+    if (!ai[1]) {
+        u16 value = JOY_readJoypad(portMapping[1]);
+        addkey(((KEY_PL1_JUMP + 0x10) & 0x7fff) | ((value & BUTTON_A) ? 0x0 : 0x8000));
+        addkey(((KEY_PL1_LEFT + 0x10) & 0x7fff) | ((value & BUTTON_LEFT) ? 0x0 : 0x8000));
+        addkey(((KEY_PL1_RIGHT + 0x10) & 0x7fff) | ((value & BUTTON_RIGHT) ? 0x0 : 0x8000));
+    }
+    if (!ai[2]) {
+        u16 value = JOY_readJoypad(portMapping[2]);
+        addkey(((KEY_PL1_JUMP + 0x20) & 0x7fff) | ((value & BUTTON_A) ? 0x0 : 0x8000));
+        addkey(((KEY_PL1_LEFT + 0x20) & 0x7fff) | ((value & BUTTON_LEFT) ? 0x0 : 0x8000));
+        addkey(((KEY_PL1_RIGHT + 0x20) & 0x7fff) | ((value & BUTTON_RIGHT) ? 0x0 : 0x8000));
+    }
+    if (!ai[2]) {
+        u16 value = JOY_readJoypad(portMapping[3]);
+        addkey(((KEY_PL1_JUMP + 0x30) & 0x7fff) | ((value & BUTTON_A) ? 0x0 : 0x8000));
+        addkey(((KEY_PL1_LEFT + 0x30) & 0x7fff) | ((value & BUTTON_LEFT) ? 0x0 : 0x8000));
+        addkey(((KEY_PL1_RIGHT + 0x30) & 0x7fff) | ((value & BUTTON_RIGHT) ? 0x0 : 0x8000));
     }
 }
 

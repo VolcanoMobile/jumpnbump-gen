@@ -84,7 +84,6 @@ extern u16 palette[];
 extern player_t player[];
 extern player_anim_t player_anims[];
 extern const u16 (*ban_map)[32];
-extern u16 endscore_reached;
 extern bool ai[];
 
 // SAT pointer
