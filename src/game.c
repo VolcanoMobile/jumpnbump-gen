@@ -38,7 +38,7 @@ static s32 explosions_values[EXPLOSION_RANDOM_VALUES_SIZE][4];
 
 static void position_player(u32 player_num)
 {
-    u32 c1;
+    u8 c1;
     s16 s1, s2;
 
     while (1) {
@@ -463,7 +463,7 @@ static void steer_players(void)
     cpu_move();
     update_player_actions();
 
-    for (u32 c1 = 0; c1 < JNB_MAX_PLAYERS; c1++) {
+    for (u8 c1 = 0; c1 < JNB_MAX_PLAYERS; c1++) {
         if (player[c1].enabled == 1) {
             if (player[c1].dead_flag == 0) {
                 if (player[c1].action_left && player[c1].action_right) {
@@ -481,7 +481,7 @@ static void steer_players(void)
                 } else if (player[c1].action_right) {
                     player_action_right(c1);
                 } else if ((!player[c1].action_left) && (!player[c1].action_right)) {
-                    u32 below_left, below, below_right;
+                    u16 below_left, below, below_right;
 
                     s1 = (player[c1].x >> 16);
                     s2 = (player[c1].y >> 16);
