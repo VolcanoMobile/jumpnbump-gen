@@ -29,7 +29,8 @@ static const char * const message[] = {
 
 	"Port to SDL2 by Come Chilliet.", "",
 
-    "Demake for Genesis by Philippe Simons", "",
+    "Demake for Genesis by Philippe Simons",
+    "Special thanks to Romain Killian",
 
 	"http://www.icculus.org/jumpnbump/", "",
 
