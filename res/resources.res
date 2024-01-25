@@ -23,6 +23,8 @@ SPRITE flesh_sprite "flesh.bmp" 1 1 NONE 0 NONE NONE
 
 XGM jump_music_ntsc "jump.vgm" 0
 XGM jump_music_pal "jump.vgm" 1
+XGM bump_music_ntsc "bump.vgm" 0
+XGM bump_music_pal "bump.vgm" 1
 
 WAV jump_1_sfx "jump_14kHz.wav" XGM
 WAV jump_2_sfx "jump_15kHz.wav" XGM

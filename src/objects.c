@@ -619,7 +619,7 @@ void update_objects(void)
     u16 currentSpringInd = springsCount;
 
     randomSpawnerInd = random() % RANDOM_SPAWNER_SIZE;
-    randomSpawnerOffset = (random() % (RANDOM_SPAWNER_SIZE / 2)) + 1; 
+    randomSpawnerOffset = (random() % 4) + 1; 
 
     while (currentSpringInd--)
     {

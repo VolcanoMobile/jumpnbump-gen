@@ -150,6 +150,12 @@ int main(bool resetType) {
                 initLevel();
                 PAL_fadeInAll(palette, 30, TRUE);
 
+                // start music
+                if (SYS_isNTSC()) {
+                    XGM_startPlay(bump_music_ntsc);
+                } else {
+                    XGM_startPlay(bump_music_pal);
+                }
                 game_state = GAME_STATE_GAME;
             }
         } else if (game_state == GAME_STATE_GAME) {
@@ -174,6 +180,8 @@ int main(bool resetType) {
                 game_state = GAME_STATE_END;
             }
         } else if (game_state == GAME_STATE_END) {
+            XGM_stopPlay();
+
             // clear sprites
             vdpSprite->y = 0;
             vdpSprite->link = 0;
