@@ -9,7 +9,11 @@
 
 #define JNB_MAX_PLAYERS 4
 
+#ifdef __DEMO__
+#define JNB_END_SCORE 20
+#else
 #define JNB_END_SCORE 100
+#endif
 
 #define KEY_PL1_LEFT	0xa0
 #define KEY_PL1_RIGHT	0xa1

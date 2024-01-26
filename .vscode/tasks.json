@@ -24,13 +24,13 @@
         },
         {
             "group": "build",
-            "label": "make debug",
+            "label": "make DEMO",
             "type": "shell",
             "command": "make",
             "args": [
                 "-f",
                 "/sgdk/makefile.gen",
-                "debug"
+                "EXTRA_FLAGS=-D__DEMO__"
             ],
             "presentation": {
                 "echo": true,

@@ -225,6 +225,7 @@ static void handleInput() {
         addkey(((KEY_PL1_LEFT) & 0x7fff) | ((value & BUTTON_LEFT) ? 0x0 : 0x8000));
         addkey(((KEY_PL1_RIGHT) & 0x7fff) | ((value & BUTTON_RIGHT) ? 0x0 : 0x8000));
     }
+#ifndef __DEMO__
     if (!ai[1]) {
         u16 value = JOY_readJoypad(portMapping[1]);
         addkey(((KEY_PL1_JUMP + 0x10) & 0x7fff) | ((value & BUTTON_A) ? 0x0 : 0x8000));
@@ -243,6 +244,7 @@ static void handleInput() {
         addkey(((KEY_PL1_LEFT + 0x30) & 0x7fff) | ((value & BUTTON_LEFT) ? 0x0 : 0x8000));
         addkey(((KEY_PL1_RIGHT + 0x30) & 0x7fff) | ((value & BUTTON_RIGHT) ? 0x0 : 0x8000));
     }
+#endif
 }
 
 static void displaySgdkLogo() {
